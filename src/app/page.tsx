@@ -1,3 +1,5 @@
+"use client"
+
 import { SiTwitter } from "react-icons/si";
 import { HiMiniHome } from "react-icons/hi2";
 import { PiHashBold } from "react-icons/pi";
@@ -6,6 +8,8 @@ import { RiMessage3Fill } from "react-icons/ri";
 import { MdBookmarks } from "react-icons/md";
 import { FaUserLarge } from "react-icons/fa6";
 import FeedCard from "@/components/FeedCard";
+import { CredentialResponse, GoogleLogin } from '@react-oauth/google';
+import { useCallback } from "react";
 
 interface twitterSideBarButton {
   title: string;
@@ -40,6 +44,9 @@ const sideBarLinks: twitterSideBarButton[] = [
 ]
 
 export default function Home() {
+  const handleLoginWithGoogle = useCallback((cred: CredentialResponse) => {
+
+  }, [])
   return (
     <div>
       <div className="grid grid-cols-12 h-screen w-screen px-56">
@@ -50,7 +57,7 @@ export default function Home() {
           <div className="mt-4 text-lg font-semibold pr-4">
             <ul>
               {sideBarLinks.map((item) => (
-                <li className="flex justify-start items-center gap-2 px-6 py-3 my-4 w-fit hover:bg-gray-800 rounded-full transition-all cursor-pointer">
+                <li key={item.title} className="flex justify-start items-center gap-2 px-6 py-3 my-4 w-fit hover:bg-gray-800 rounded-full transition-all cursor-pointer">
                   <span>{item.icon}</span>
                   <span>{item.title}</span>
                 </li>
@@ -70,7 +77,13 @@ export default function Home() {
           <FeedCard />
           <FeedCard />
         </div>
-        <div className="col-span-3"></div>
+        <div className="col-span-3 p-5">
+          <div className="border-2 p-4 rounded-lg border-gray-800 h-[10rem] w-[20rem]">
+            <h1 className="mb-2 text-xl font-semibold">New to Twitter ?</h1>
+            <p className="text-xs text-gray-600 mb-3 font-medium">Signup now to get your own personalize timeline</p>
+            <GoogleLogin onSuccess={(cred) => handleLoginWithGoogle(cred)} />
+          </div>
+        </div>
       </div>
     </div>
   );
