@@ -5,6 +5,7 @@ import { FaRegHeart } from "react-icons/fa6";
 import { FaRetweet } from "react-icons/fa6";
 import { FiShare } from "react-icons/fi";
 import { Tweet } from "@/gql/graphql";
+import Link from "next/link";
 
 interface FeedCardProps {
     data: Tweet
@@ -20,7 +21,9 @@ const FeedCard: React.FC<FeedCardProps> = (props) => {
                 </div>
                 <div className="col-span-11">
                     <div className="font-semibold p-1">
-                        <h1>{data.author?.firstName} {data.author?.lastName}</h1>
+                        <Link href={`/${data.author?.id}`}>
+                            <h1 className="hover:underline transition-all">{data.author?.firstName} {data.author?.lastName}</h1>
+                        </Link>
                     </div>
                     <div className="text-sm p-1">
                         <p>{data.content}</p>

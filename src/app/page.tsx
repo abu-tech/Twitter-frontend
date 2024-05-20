@@ -28,6 +28,8 @@ export default function Home() {
     mutate({
       content
     })
+
+    setcontent("")
   }, [mutate, content])
 
 

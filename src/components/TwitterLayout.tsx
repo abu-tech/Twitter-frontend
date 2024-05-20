@@ -10,45 +10,53 @@ import Image from "next/image"
 import { CredentialResponse, GoogleLogin } from '@react-oauth/google';
 import { useCurrentUser } from "@/hooks/user";
 import { useQueryClient } from "@tanstack/react-query";
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import { graphqlClient } from "@/clients/api";
 import { verifyGoogleTokenQuery } from "@/graphql/query/user";
+import Link from 'next/link';
 
 interface twitterSideBarButton {
-    title: string;
-    icon: React.ReactNode;
+    title: string
+    icon: React.ReactNode
+    route: string
 }
-
-const sideBarLinks: twitterSideBarButton[] = [
-    {
-        title: 'Home',
-        icon: <HiMiniHome />
-    },
-    {
-        title: 'Explore',
-        icon: <PiHashBold />
-    },
-    {
-        title: 'Notifications',
-        icon: <BsBellFill />
-    },
-    {
-        title: 'Messages',
-        icon: <RiMessage3Fill />
-    },
-    {
-        title: 'Bookmarks',
-        icon: <MdBookmarks />
-    },
-    {
-        title: 'Profile',
-        icon: <FaUserLarge />
-    }
-]
 
 function TwitterLayout({ children }: { children: React.ReactNode }) {
     const { user } = useCurrentUser()
     const queryClient = useQueryClient()
+
+    const sideBarMenuItems: twitterSideBarButton[] = useMemo(() => [
+        {
+            title: 'Home',
+            icon: <HiMiniHome />,
+            route: "/"
+        },
+        {
+            title: 'Explore',
+            icon: <PiHashBold />,
+            route: "/"
+        },
+        {
+            title: 'Notifications',
+            icon: <BsBellFill />,
+            route: "/"
+        },
+        {
+            title: 'Messages',
+            icon: <RiMessage3Fill />,
+            route: "/"
+        },
+        {
+            title: 'Bookmarks',
+            icon: <MdBookmarks />,
+            route: "/"
+        },
+        {
+            title: 'Profile',
+            icon: <FaUserLarge />,
+            route: `/${user?.id}`
+        }
+    ], [])
 
     const handleLoginWithGoogle = useCallback(async (cred: CredentialResponse) => {
         const authToken = cred.credential
@@ -79,10 +87,12 @@ function TwitterLayout({ children }: { children: React.ReactNode }) {
                         </div>
                         <div className="mt-4 text-lg font-semibold pr-4">
                             <ul>
-                                {sideBarLinks.map((item) => (
-                                    <li key={item.title} className="flex justify-start items-center gap-2 px-6 py-3 my-4 w-fit hover:bg-gray-800 rounded-full transition-all cursor-pointer">
-                                        <span>{item.icon}</span>
-                                        <span className="hidden sm:inline">{item.title}</span>
+                                {sideBarMenuItems.map((item) => (
+                                    <li key={item.title}>
+                                        <Link href={item.route} className="flex justify-start items-center gap-2 px-6 py-3 my-4 w-fit hover:bg-gray-800 rounded-full transition-all cursor-pointer">
+                                            <span>{item.icon}</span>
+                                            <span className="hidden sm:inline">{item.title}</span>
+                                        </Link>
                                     </li>
                                 ))}
                             </ul>
