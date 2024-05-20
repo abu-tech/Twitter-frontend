@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { GoogleOAuthProvider } from '@react-oauth/google';
 import { Toaster } from 'react-hot-toast';
+import { GoogleOAuthProvider } from '@react-oauth/google';
 import ReactQueryProvider from "@/utils/ReactQueryProvider";
 
 
@@ -18,11 +18,14 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+
   return (
     <html lang="en">
       <ReactQueryProvider>
         <GoogleOAuthProvider clientId="897296947824-atfiae7v18cu6te8svhsvkp6ltbm99m5.apps.googleusercontent.com">
-          <body className={inter.className}>{children}</body>
+          <body className={inter.className}>
+            {children}
+          </body>
           <Toaster />
         </GoogleOAuthProvider>
       </ReactQueryProvider>
