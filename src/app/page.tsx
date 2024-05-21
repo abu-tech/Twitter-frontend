@@ -8,6 +8,10 @@ import Image from "next/image";
 import { useCreateTweet, useGetAllTweets } from "@/hooks/tweet";
 import { Tweet } from "@/gql/graphql";
 import TwitterLayout from "@/components/TwitterLayout";
+import { graphqlClient } from "@/clients/api";
+import { getSignedUrlQuery } from "@/graphql/query/tweet";
+import toast from "react-hot-toast";
+import axios from "axios";
 
 
 export default function Home() {
@@ -16,21 +20,54 @@ export default function Home() {
   const { tweets } = useGetAllTweets()
   const { mutate } = useCreateTweet()
   const [content, setcontent] = useState("")
+  const [tweetImageURL, setTweetImageURL] = useState("")
+
+  const handelImageUpload = useCallback((input: HTMLInputElement) => {
+    return async (event: Event) => {
+      event.preventDefault()
+
+      const file: File | null | undefined = input.files?.item(0)
+
+      if (!file) return
+
+      const { getPresignedURL } = await graphqlClient.request(getSignedUrlQuery, { imageType: file.type.split("/")[1] })
+
+      if (getPresignedURL) {
+        toast.loading("Uploading...", { id: "2" })
+
+        await axios.put(getPresignedURL, file, {
+          headers: {
+            "Content-Type": file.type.split("/")[1]
+          }
+        })
+
+        const url = new URL(getPresignedURL)
+        setTweetImageURL(`${url.origin}${url.pathname}`)
+
+        toast.success("Image Uploaded!", { id: "2" })
+      }
+    }
+  }, [])
 
   const handelSelectImage = useCallback(() => {
     const input = document.createElement('input')
     input.setAttribute('type', 'file')
     input.setAttribute('accept', 'image/*')
+
+    input.addEventListener("change", handelImageUpload(input))
+
     input.click()
-  }, [])
+  }, [handelImageUpload])
 
   const handleCreateTweet = useCallback(() => {
     mutate({
-      content
+      content: content,
+      imageURL: tweetImageURL
     })
 
     setcontent("")
-  }, [mutate, content])
+    setTweetImageURL("")
+  }, [mutate, content, tweetImageURL])
 
 
   return (
@@ -42,6 +79,11 @@ export default function Home() {
           </div>
           <div className="col-span-11">
             <textarea value={content} onChange={(e) => setcontent(e.target.value)} className="w-full bg-transparent text-xl px-3 border-b border-gray-800" rows={4} placeholder="What is Happening?!"></textarea>
+            {
+              tweetImageURL && (
+                <Image className="my-2 mx-auto rounded-md" src={tweetImageURL} alt="tweet-image" width={300} height={300} />
+              )
+            }
             <div className="flex justify-between items-center mt-2">
               <div className="text-lg hover:bg-gray-800 hover:text-blue-400 rounded-full p-2 cursor-pointer transition-all">
                 <FiImage onClick={handelSelectImage} />

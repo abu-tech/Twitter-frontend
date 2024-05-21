@@ -27,6 +27,11 @@ const FeedCard: React.FC<FeedCardProps> = (props) => {
                     </div>
                     <div className="text-sm p-1">
                         <p>{data.content}</p>
+                        {
+                            data.imageURL && (
+                                <Image className="my-2 rounded-md" src={data.imageURL} alt="tweet-image" height={400} width={400} />
+                            )
+                        }
                     </div>
                     <div className="flex justify-between mt-2 text-base items-center pr-10">
                         <div className="hover:bg-gray-800 hover:text-blue-400 rounded-full p-2 cursor-pointer transition-all">
