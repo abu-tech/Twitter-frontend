@@ -1,3 +1,5 @@
+"use client"
+
 import toast from 'react-hot-toast';
 import { SiTwitter } from "react-icons/si";
 import { HiMiniHome } from "react-icons/hi2";
@@ -116,7 +118,7 @@ function TwitterLayout({ children }: { children: React.ReactNode }) {
                 <div className="col-span-10 sm:col-span-6 border-x-[0.5px] border-gray-800 h-screen overflow-scroll">
                     {children}
                 </div>
-                <div className="hidden sm:col-span-3 p-5">
+                <div className="hidden sm:block col-span-3 p-5">
                     {!user &&
                         <div className="border-2 p-4 rounded-lg border-gray-800 h-[10rem] w-[20rem]">
                             <h1 className="mb-2 text-xl font-semibold">New to Twitter ?</h1>
