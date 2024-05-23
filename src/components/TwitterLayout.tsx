@@ -16,6 +16,7 @@ import { useCallback, useMemo } from "react";
 import { graphqlClient } from "@/clients/api";
 import { verifyGoogleTokenQuery } from "@/graphql/query/user";
 import Link from 'next/link';
+import { followUserMutation } from '@/graphql/mutation/user';
 
 interface twitterSideBarButton {
     title: string
@@ -78,6 +79,13 @@ function TwitterLayout({ children }: { children: React.ReactNode }) {
         toast.success("Welcome!")
     }, [queryClient])
 
+    const handelFollow = useCallback(async (to: string) => {
+
+        await graphqlClient.request(followUserMutation, { to })
+        await queryClient.invalidateQueries({ queryKey: ["current-user"] })
+
+    }, [queryClient])
+
 
     return (
         <div>
@@ -135,10 +143,8 @@ function TwitterLayout({ children }: { children: React.ReactNode }) {
                                 user.recommendedUsers.map((item) => (
                                     <Link href={`/${item?.id}`} className="py-3 px-4 flex gap-2 items-center rounded-2xl hover:bg-[#260f0f85] transition-all cursor-pointer">
                                         <Image className="rounded-full" src={item?.profileImage || ""} width={50} height={50} alt="image" />
-                                        <div>
-                                            <h1 className="px-1 text-sm font-semibold">{item?.firstName} {item?.lastName}</h1>
-                                        </div>
-                                        <button className="bg-[#cce6ec] rounded-full py-1 px-3 text-[#0f1419] font-semibold text-sm hover:bg-[#cce6ecf0] transition-all">Follow</button>
+                                        <h1 className="px-1 text-sm font-semibold">{item?.firstName} {item?.lastName}</h1>
+                                        <button onClick={() => handelFollow(item?.id as string)} className="bg-[#cce6ec] rounded-full py-1 px-3 text-[#0f1419] font-semibold text-sm hover:bg-[#cce6ecf0] transition-all">Follow</button>
                                     </Link>
                                 ))
                             }
