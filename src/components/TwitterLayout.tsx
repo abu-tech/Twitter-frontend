@@ -119,12 +119,31 @@ function TwitterLayout({ children }: { children: React.ReactNode }) {
                     {children}
                 </div>
                 <div className="hidden sm:block col-span-3 p-5">
-                    {!user &&
-                        <div className="border-2 p-4 rounded-lg border-gray-800 h-[10rem] w-[20rem]">
+                    {
+                        !user &&
+                        <div className="border-2 p-4 rounded-xl border-gray-800 h-[10rem] w-[20rem]">
                             <h1 className="mb-2 text-xl font-semibold">New to Twitter ?</h1>
                             <p className="text-xs text-gray-600 mb-3 font-medium">Signup now to get your own personalize timeline</p>
                             <GoogleLogin onSuccess={handleLoginWithGoogle} />
-                        </div>}
+                        </div>
+                    }
+                    {
+                        user?.recommendedUsers &&
+                        <div className="border-2 p-4 rounded-xl border-gray-800 h-[10rem] w-[20rem]">
+                            <h1 className="mb-2 text-xl font-semibold text-center">People You May Know!</h1>
+                            {
+                                user.recommendedUsers.map((item) => (
+                                    <Link href={`/${item?.id}`} className="py-3 px-4 flex gap-2 items-center rounded-2xl hover:bg-[#260f0f85] transition-all cursor-pointer">
+                                        <Image className="rounded-full" src={item?.profileImage || ""} width={50} height={50} alt="image" />
+                                        <div>
+                                            <h1 className="px-1 text-sm font-semibold">{item?.firstName} {item?.lastName}</h1>
+                                        </div>
+                                        <button className="bg-[#cce6ec] rounded-full py-1 px-3 text-[#0f1419] font-semibold text-sm hover:bg-[#cce6ecf0] transition-all">Follow</button>
+                                    </Link>
+                                ))
+                            }
+                        </div>
+                    }
                 </div>
             </div>
         </div>
