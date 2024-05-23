@@ -115,7 +115,7 @@ function TwitterLayout({ children }: { children: React.ReactNode }) {
                             </div>
                         </div>}
                 </div>
-                <div className="col-span-10 sm:col-span-6 border-x-[0.5px] border-gray-800 h-screen overflow-scroll">
+                <div className="col-span-10 sm:col-span-6 border-x-[0.5px] border-gray-800 h-screen overflow-scroll no-scrollbar">
                     {children}
                 </div>
                 <div className="hidden sm:block col-span-3 p-5">
