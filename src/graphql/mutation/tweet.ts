@@ -7,3 +7,9 @@ export const createTweetMutation = graphql(`
         }
     }
 `)
+
+export const deleteImageMutation = graphql(`
+    mutation DeleteImageFromS3($imageKey: String!) {
+        deleteImageFromS3(imageKey: $imageKey)
+    }
+`)

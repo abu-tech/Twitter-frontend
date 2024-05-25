@@ -20,10 +20,13 @@ const FeedCard: React.FC<FeedCardProps> = (props) => {
                     <Image className="rounded-full" src={data.author?.profileImage || ""} alt="profile" height={50} width={50} />
                 </div>
                 <div className="col-span-11">
-                    <div className="font-semibold p-1">
+                    <div className="flex gap-3 items-center font-semibold p-1">
                         <Link href={`/${data.author?.id}`}>
                             <h1 className="hover:underline transition-all">{data.author?.firstName} {data.author?.lastName}</h1>
                         </Link>
+                        <div className="px-1 mr-10 text-sm text-gray-600 font-medium">
+                            <span>{new Date(Number(data.createdAt) || "").toLocaleDateString('en-GB')}</span>
+                        </div>
                     </div>
                     <div className="text-sm p-1">
                         <p>{data.content}</p>

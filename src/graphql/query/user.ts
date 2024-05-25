@@ -53,6 +53,7 @@ export const getUserByIdQuery = graphql(`
                     lastName
                     profileImage
                 }
+                createdAt
             }
             followers {
                 id

@@ -10,6 +10,7 @@ import { useCallback, useMemo } from "react"
 import { graphqlClient } from "@/clients/api"
 import { followUserMutation, unfollowUserMutation } from "@/graphql/mutation/user"
 import { useQueryClient } from "@tanstack/react-query"
+import toast from "react-hot-toast"
 
 
 function ProfileWrapper({ params }: { params: { userId: string } }) {
@@ -23,24 +24,34 @@ function ProfileWrapper({ params }: { params: { userId: string } }) {
     }, [user, user?.following, userInfo])
 
 
-    const handelFollow = useCallback(async () => {
-        if (!userInfo?.id) return
+    const handleFollow = useCallback(async () => {
+        try {
+            if (!userInfo?.id) return
 
-        await graphqlClient.request(followUserMutation, { to: userInfo?.id })
-        await queryClient.invalidateQueries({ queryKey: ["current-user"] })
-        await queryClient.invalidateQueries({ queryKey: ["user-info", userInfo.id] })
+            await graphqlClient.request(followUserMutation, { to: userInfo?.id })
+            await queryClient.invalidateQueries({ queryKey: ["current-user"] })
+            await queryClient.invalidateQueries({ queryKey: ["user-info", userInfo.id] })
+        } catch (error) {
+            console.log(error)
+            toast.error("Something Went wrong")
+        }
 
 
-    }, [userInfo?.id, queryClient])
+    }, [userInfo, queryClient])
 
-    const handelUnfollow = useCallback(async () => {
-        if (!userInfo?.id) return
+    const handleUnfollow = useCallback(async () => {
+        try {
+            if (!userInfo?.id) return
 
-        await graphqlClient.request(unfollowUserMutation, { to: userInfo?.id })
-        await queryClient.invalidateQueries({ queryKey: ["current-user"] })
-        await queryClient.invalidateQueries({ queryKey: ["user-info", userInfo.id] })
+            await graphqlClient.request(unfollowUserMutation, { to: userInfo?.id })
+            await queryClient.invalidateQueries({ queryKey: ["current-user"] })
+            await queryClient.invalidateQueries({ queryKey: ["user-info", userInfo.id] })
+        } catch (error) {
+            console.log(error)
+            toast.error("Something Went wrong")
+        }
 
-    }, [userInfo?.id, queryClient])
+    }, [userInfo, queryClient])
 
     return (
         <TwitterLayout>
@@ -66,11 +77,11 @@ function ProfileWrapper({ params }: { params: { userId: string } }) {
                                 <>
                                     {
                                         amIFollowing ?
-                                            <button onClick={handelUnfollow} className="bg-transparent border-[1px] border-gray-800 rounded-full py-1 px-5 font-semibold text-base group hover:bg-[#260f0f85] hover:border-red-600 transition-all">
+                                            <button onClick={handleUnfollow} className="bg-transparent border-[1px] border-gray-800 rounded-full py-1 px-5 font-semibold text-base group hover:bg-[#260f0f85] hover:border-red-600 transition-all">
                                                 <span className="group-hover:hidden">Following</span>
                                                 <span className="hidden group-hover:block text-red-600">Unfollow</span>
                                             </button> :
-                                            <button onClick={handelFollow} className="bg-[#cce6ec] rounded-full py-1 px-5 text-[#0f1419] font-semibold text-base hover:bg-[#cce6ecf0] transition-all">Follow</button>
+                                            <button onClick={handleFollow} className="bg-[#cce6ec] rounded-full py-1 px-5 text-[#0f1419] font-semibold text-base hover:bg-[#cce6ecf0] transition-all">Follow</button>
                                     }
                                 </>
                             )

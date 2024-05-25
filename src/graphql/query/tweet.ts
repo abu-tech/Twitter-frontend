@@ -12,6 +12,7 @@ export const getAllTweetsQuery = graphql(`
                 lastName
                 profileImage
             }
+            createdAt
         }
     }
 `)

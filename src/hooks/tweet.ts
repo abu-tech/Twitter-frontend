@@ -13,9 +13,9 @@ export const useCreateTweet = () => {
         onMutate: () => toast.loading("Creating Tweet", { id: "1" }),
         onSuccess: async () => {
             await queryClient.invalidateQueries({ queryKey: ["all-tweets"] })
-            toast.dismiss("1")
-            toast.success("Tweet Posted Successfully!")
-        }
+            toast.success("Tweet Posted Successfully!", { id: "1" })
+        },
+        onError: () => toast.error("Please Wait for 20 seconds!")
     })
 
     return mutation
@@ -24,7 +24,7 @@ export const useCreateTweet = () => {
 export const useGetAllTweets = () => {
     const query = useQuery({
         queryKey: ["all-tweets"],
-        queryFn: () => graphqlClient.request(getAllTweetsQuery)
+        queryFn: () => graphqlClient.request(getAllTweetsQuery),
     })
 
     return { ...query, tweets: query.data?.getAllTweets }

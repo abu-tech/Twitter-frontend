@@ -62,27 +62,36 @@ function TwitterLayout({ children }: { children: React.ReactNode }) {
     ], [])
 
     const handleLoginWithGoogle = useCallback(async (cred: CredentialResponse) => {
-        const authToken = cred.credential
+        try {
+            const authToken = cred.credential
 
-        if (!authToken) {
-            return toast.error("Authentication Error")
+            if (!authToken) {
+                return toast.error("Authentication Error")
+            }
+
+            const { verifyGoogleToken } = await graphqlClient.request(verifyGoogleTokenQuery, { token: authToken })
+
+            if (verifyGoogleToken) {
+                window.localStorage.setItem("__twitter__token", verifyGoogleToken)
+            }
+
+            await queryClient.invalidateQueries({ queryKey: ["current-user"] })
+
+            toast.success("Welcome!")
+        } catch (error) {
+            console.log(error)
+            toast.error("Something Went wrong")
         }
-
-        const { verifyGoogleToken } = await graphqlClient.request(verifyGoogleTokenQuery, { token: authToken })
-
-        if (verifyGoogleToken) {
-            window.localStorage.setItem("__twitter__token", verifyGoogleToken)
-        }
-
-        await queryClient.invalidateQueries({ queryKey: ["current-user"] })
-
-        toast.success("Welcome!")
     }, [queryClient])
 
-    const handelFollow = useCallback(async (to: string) => {
-
-        await graphqlClient.request(followUserMutation, { to })
-        await queryClient.invalidateQueries({ queryKey: ["current-user"] })
+    const handleFollow = useCallback(async (to: string) => {
+        try {
+            await graphqlClient.request(followUserMutation, { to })
+            await queryClient.invalidateQueries({ queryKey: ["current-user"] })
+        } catch (error) {
+            console.log(error)
+            toast.error("Something Went wrong")
+        }
 
     }, [queryClient])
 
@@ -136,15 +145,15 @@ function TwitterLayout({ children }: { children: React.ReactNode }) {
                         </div>
                     }
                     {
-                        user?.recommendedUsers &&
+                        (user?.recommendedUsers && user?.recommendedUsers?.length > 0) &&
                         <div className="border-2 p-4 rounded-xl border-gray-800 h-[10rem] w-[20rem]">
                             <h1 className="mb-2 text-xl font-semibold text-center">People You May Know!</h1>
                             {
                                 user.recommendedUsers.map((item) => (
-                                    <Link href={`/${item?.id}`} className="py-3 px-4 flex gap-2 items-center rounded-2xl hover:bg-[#260f0f85] transition-all cursor-pointer">
+                                    <Link key={item?.id} href={`/${item?.id}`} className="py-3 px-4 flex gap-2 items-center rounded-2xl hover:bg-[#260f0f85] transition-all cursor-pointer">
                                         <Image className="rounded-full" src={item?.profileImage || ""} width={50} height={50} alt="image" />
                                         <h1 className="px-1 text-sm font-semibold">{item?.firstName} {item?.lastName}</h1>
-                                        <button onClick={() => handelFollow(item?.id as string)} className="bg-[#cce6ec] rounded-full py-1 px-3 text-[#0f1419] font-semibold text-sm hover:bg-[#cce6ecf0] transition-all">Follow</button>
+                                        <button onClick={() => handleFollow(item?.id as string)} className="bg-[#cce6ec] rounded-full py-1 px-3 text-[#0f1419] font-semibold text-sm hover:bg-[#cce6ecf0] transition-all">Follow</button>
                                     </Link>
                                 ))
                             }
